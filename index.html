@@ -172,5 +172,13 @@
             </section>
         </div>
     </div>
+
+    <script>
+        // Define a data de hoje como padrão no campo de data de venda
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('sale-date').value = today;
+        });
+    </script>
 </body>
 </html>
