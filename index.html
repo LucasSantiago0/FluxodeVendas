@@ -190,6 +190,9 @@
                         <label for="product-description">Descrição do Produto:</label>
                         <input type="text" id="product-description" placeholder="Ex: Caneca personalizada" required>
 
+                        <label for="cpf">CPF do Cliente:</label>
+                        <input type="text" id="cpf" placeholder="Ex: 123.456.789-00" required>
+
                         <label for="sale-date">Data da Venda:</label>
                         <input type="date" id="sale-date" required>
 
@@ -295,6 +298,16 @@
         const localDate = new Date(today.getTime() - (offset * 60000)).toISOString().split('T')[0];
         document.getElementById('sale-date').value = localDate;
     });
+    const existingCPFs = ["123.456.789-00", "987.654.321-00"];
+
+    document.getElementById('cpf').addEventListener('input', function() {
+        const cpf = this.value;
+        if (existingCPFs.includes(cpf)) {
+            this.style.borderColor = 'green';
+        } else {
+            this.style.borderColor = 'gray';
+        }
+    });
 </script>
         </div>
     </div>
@@ -365,7 +378,12 @@
     <script>
         document.getElementById('sales-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            openModal();
+            const cpf = document.getElementById('cpf').value;
+            if (!existingCPFs.includes(cpf)) {
+                openModal();
+            } else {
+                alert('Venda realizada com sucesso para cliente existente!');
+            }
         });
 
         function openModal() {
