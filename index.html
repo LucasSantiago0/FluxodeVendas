@@ -16,9 +16,9 @@
         header {
             background-color: #4CAF50;
             color: white;
-            padding: 20px 0;
+            padding: 5px 0;
             text-align: center;
-            font-size: 1.8em;
+            font-size: 1.2em;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -29,11 +29,12 @@
             color: white;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             padding: 20px 0;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
             position: fixed;
             transition: width 0.3s ease;
+            overflow: hidden;
         }
 
         .sidebar:hover {
@@ -41,24 +42,34 @@
         }
 
         .sidebar a {
-            padding: 15px 20px;
+            padding: 15px 10px;
             color: white;
             text-decoration: none;
             font-size: 1.1em;
             width: 100%;
-            text-align: left;
             display: flex;
             align-items: center;
-            transition: background-color 0.3s ease;
+            white-space: nowrap;
+            transition: background-color 0.3s ease, padding 0.3s ease;
+        }
+
+        .sidebar a i {
+            font-size: 1.5em;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .sidebar a span {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover a span {
+            opacity: 1;
         }
 
         .sidebar a:hover {
             background-color: #4CAF50;
-        }
-
-        .sidebar a i {
-            margin-right: 15px;
-            font-size: 1.3em;
         }
 
         .content {
@@ -154,9 +165,9 @@
 </head>
 <body>
     <div class="sidebar">
-        <a href="login.html"><i>🏠</i> Sair</a>
-        <a href="vendas.html"><i>📦</i> Gerenciador de Vendas</a>
-        <a href="consultas.html"><i>🔍</i> Consultar Lançamentos</a>
+        <a href="login.html"><i>🏠</i> <span>Sair</span></a>
+        <a href="#vendas"><i>📦</i> <span>Gerenciador de Vendas</span></a>
+        <a href="#estoque"><i>📋</i> <span>Gerenciar Estoque</span></a>
     </div>
 
     <div class="content">
@@ -165,7 +176,7 @@
         </header>
 
         <div class="main-container">
-            <div class="container">
+            <div class="container" id="vendas">
                 <section class="section">
                     <h2>Lançar Vendas</h2>
                     <form id="sales-form">
@@ -182,35 +193,111 @@
                         <label for="sale-date">Data da Venda:</label>
                         <input type="date" id="sale-date" required>
 
-                        <label for="gross-value">Preço de Custo:</label>
+                        <label for="gross-value">Preço de Custo (R$):</label>
                         <input type="number" id="gross-value" placeholder="Ex: 50.00" step="0.01" required>
 
-                        <label for="material-cost">Quanto Paguei:</label>
-                        <input type="number" id="material-cost" placeholder="Ex: 10.00" step="0.01" required>
+                        <label for="sale-value">Valor da Venda (R$):</label>
+                        <input type="number" id="sale-value" placeholder="Ex: 100.00" step="0.01" required>
+
+                        <label for="net-value">Valor a Receber (R$):</label>
+                        <input type="number" id="net-value" placeholder="Calculado automaticamente" readonly>
+
+                        <label for="quantity">Quantidade Vendida:</label>
+                        <input type="number" id="quantity" placeholder="Ex: 5" min="1" required>
 
                         <button type="submit">Adicionar Venda</button>
                     </form>
-                </section>
-            </div>
+                    
+</section>
+</div>
 
-            <div class="container">
+            <div class="container" id="estoque">
                 <section class="section">
                     <h2>Gerenciar Estoque</h2>
                     <form id="inventory-form">
-                        <label for="item-description">Nome do Produto:</label>
-                        <select id="item-description" required>
+                        <label for="item-name">Nome do Produto:</label>
+                        <select id="item-name" required>
                             <option value="Musgo">Musgo</option>
                             <option value="Vidro">Vidro</option>
                             <option value="Terrário">Terrário</option>
                         </select>
 
-                        <label for="quantity">Quantidade:</label>
-                        <input type="number" id="quantity" placeholder="Ex: 10" required>
+                        <label for="item-quantity">Quantidade:</label>
+                        <input type="number" id="item-quantity" placeholder="Ex: 10" required>
+
+                        <label for="item-value-paid">Valor Pago (R$):</label>
+                        <input type="number" id="item-value-paid" placeholder="Ex: 150.00" step="0.01" required>
+                        <input type="number" id="item-quantity" placeholder="Ex: 10" required>
 
                         <button type="submit">Atualizar Estoque</button>
                     </form>
-                </section>
-            </div>
+                    <label for="search-item">Buscar Produto:</label>
+    <select id="search-item" onchange="filterTable()">
+        <option value="all">Todos</option>
+        <option value="Musgo">Musgo</option>
+        <option value="Vidro">Vidro</option>
+        <option value="Terrário">Terrário</option>
+    </select>
+    <div class="sub-container">
+        <h3>Itens em Estoque</h3>
+        <table id="stock-table">
+            <thead>
+                <tr>
+                    <th>Nome do Produto</th>
+                    <th>Quantidade</th>
+                    <th>Valor Pago (R$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-name="Musgo">
+                    <td>Musgo</td>
+                    <td>20</td>
+                    <td>R$ 200,00</td>
+                </tr>
+                <tr data-name="Vidro">
+                    <td>Vidro</td>
+                    <td>15</td>
+                    <td>R$ 150,00</td>
+                </tr>
+                <tr data-name="Terrário">
+                    <td>Terrário</td>
+                    <td>10</td>
+                    <td>R$ 100,00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</div>
+
+<script>
+    function filterTable() {
+        const filter = document.getElementById("search-item").value;
+        const rows = document.querySelectorAll("#stock-table tbody tr");
+        rows.forEach(row => {
+            if (filter === "all" || row.getAttribute("data-name") === filter) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+    document.getElementById('sale-value').addEventListener('input', calculateNetValue);
+    document.getElementById('gross-value').addEventListener('input', calculateNetValue);
+
+    function calculateNetValue() {
+        const saleValue = parseFloat(document.getElementById('sale-value').value) || 0;
+        const grossValue = parseFloat(document.getElementById('gross-value').value) || 0;
+        const netValue = saleValue - grossValue;
+        document.getElementById('net-value').value = netValue.toFixed(2);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const offset = today.getTimezoneOffset();
+        const localDate = new Date(today.getTime() - (offset * 60000)).toISOString().split('T')[0];
+        document.getElementById('sale-date').value = localDate;
+    });
+</script>
         </div>
     </div>
 </body>
